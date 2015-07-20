@@ -84,6 +84,13 @@ class Command(object):
 
 
 
+class DoNothing(Command):
+
+    def execute(self):
+        pass
+
+
+
 class TurnOn(Command):
 
     def __init__(self, device):
@@ -180,48 +187,60 @@ class ToggleButton(Button):
 # Application
 # --------------------------------
 
+class EntertainmentApp(object):
 
-tv = Television()
-radio = Radio()
+    def __init__(self):
 
-# create various commands
-turn_tv_on = TurnOn(device = tv)
-turn_radio_on = TurnOn(device = radio)
-turn_tv_off = TurnOff(device = tv)
-turn_radio_off = TurnOff(device = radio)
-turn_tv_up = TurnUp(device = tv)
-turn_radio_up = TurnUp(device = radio)
-turn_tv_down = TurnDown(device = tv)
-turn_radio_down = TurnDown(device = radio)
-turn_them_off = TurnThemOff(devices = [tv, radio])
+        # create devices
 
-# create remote control buttons
+        tv = Television()
+        radio = Radio()
 
-button1 = ToggleButton(
-    on_command = turn_tv_on,
-    off_command = turn_tv_off)
+        # create various commands
 
-button2 = ToggleButton(
-    on_command = turn_radio_on,
-    off_command = turn_radio_off)
+        turn_tv_on = TurnOn(device=tv)
+        turn_radio_on = TurnOn(device=radio)
+        turn_tv_off = TurnOff(device=tv)
+        turn_radio_off = TurnOff(device=radio)
+        turn_tv_up = TurnUp(device=tv)
+        turn_radio_up = TurnUp(device=radio)
+        turn_tv_down = TurnDown(device=tv)
+        turn_radio_down = TurnDown(device=radio)
+        turn_them_off = TurnThemOff(devices=[tv, radio])
+        do_nothing = DoNothing()
 
-button3 = PushButton(command = turn_tv_up)
-button4 = PushButton(command = turn_tv_down)
+        # create 10-button remote control
 
-button5 = PushButton(command = turn_radio_up)
-button6 = PushButton(command = turn_radio_down)
+        self.buttons = [PushButton(command=do_nothing)] * 10
+        self.buttons[0] = ToggleButton(
+            on_command=turn_tv_on, off_command=turn_tv_off)
+        self.buttons[1]=ToggleButton(
+            on_command=turn_radio_on, off_command=turn_radio_off)
+        self.buttons[2] = PushButton(command=turn_tv_up)
+        self.buttons[3] = PushButton(command=turn_tv_down)
+        self.buttons[4] = PushButton(command=turn_radio_up)
+        self.buttons[5] = PushButton(command=turn_radio_down)
+        self.buttons[6] = PushButton(command=turn_them_off)
 
-button7 = PushButton(command = turn_them_off)
 
-# playing with the buttons
+    def run(self):
 
-button1.press()
-button2.press()
-button1.press()
-button1.press()
-button3.press()
-button3.press()
-button4.press()
-button5.press()
-button6.press()
-button7.press()
+        # playing with the buttons
+        self.buttons[0].press()
+        self.buttons[1].press()
+        self.buttons[0].press()
+        self.buttons[0].press()
+        self.buttons[2].press()
+        self.buttons[2].press()
+        self.buttons[2].press()
+        self.buttons[4].press()
+        self.buttons[5].press()
+        self.buttons[6].press()
+        self.buttons[8].press()
+
+
+
+if __name__ == "__main__":
+
+    app = EntertainmentApp()
+    app.run()
