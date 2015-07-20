@@ -6,7 +6,25 @@
 # -----------------------------
 
 
-class Television(object):
+class Device(object):
+
+    """ Device interface """
+
+    def on(self):
+        raise NotImplementedError()
+
+    def off(self):
+        raise NotImplementedError()
+
+    def volume_up(self):
+        raise NotImplementedError()
+
+    def volume_down(self):
+        raise NotImplementedError()
+
+
+
+class Television(Device):
 
     def __init__(self):
         self._volume = 0
@@ -28,7 +46,8 @@ class Television(object):
         print "TV volume is", self._volume
 
 
-class Radio(object):
+
+class Radio(Device):
 
     def __init__(self):
         self._volume = 0
@@ -42,12 +61,12 @@ class Radio(object):
     def volume_up(self):
         if self._volume < 10:
             self._volume += 1
-        print "TV volume is", self._volume
+        print "Radio volume is", self._volume
 
     def volume_down(self):
         if self._volume > 0:
             self._volume -= 1
-        print "TV volume is", self._volume
+        print "Radio volume is", self._volume
 
 
 
@@ -55,7 +74,17 @@ class Radio(object):
 # Commands
 # ----------------------------------
 
-class TurnOn(object):
+
+class Command(object):
+
+    """ command interface """
+
+    def execute(self):
+        raise NotImplementedError()
+
+
+
+class TurnOn(Command):
 
     def __init__(self, device):
         self._device = device
@@ -64,7 +93,8 @@ class TurnOn(object):
         self._device.on()
 
 
-class TurnOff(object):
+
+class TurnOff(Command):
 
     def __init__(self, device):
         self._device = device
@@ -73,7 +103,8 @@ class TurnOff(object):
         self._device.off()
 
 
-class TurnUp(object):
+
+class TurnUp(Command):
 
     def __init__(self, device):
         self._device = device
@@ -82,7 +113,18 @@ class TurnUp(object):
         self._device.volume_up()
 
 
-class TurnThemOff(object):
+
+class TurnDown(Command):
+
+    def __init__(self, device):
+        self._device = device
+
+    def execute(self):
+        self._device.volume_down()
+
+
+
+class TurnThemOff(Command):
 
     def __init__(self, devices):
         self._devices = devices
@@ -92,12 +134,22 @@ class TurnThemOff(object):
             device.off()
 
 
+
 # --------------------------------
-# Invoker
+# Invokers
 # --------------------------------
 
 
 class Button(object):
+
+    """ Button interface """
+
+    def press(self):
+        raise NotImplementedError()
+
+
+
+class PushButton(Button):
 
     def __init__(self, command):
         self._command = command
@@ -106,35 +158,70 @@ class Button(object):
         self._command.execute()
 
 
+
+class ToggleButton(Button):
+
+    def __init__(self, on_command, off_command):
+        self._on_command = on_command
+        self._off_command = off_command
+        self._state = 'off'
+
+    def press(self):
+        if self._state == 'off':
+            self._state = 'on'
+            self._on_command.execute()
+        else:
+            self._state = 'off'
+            self._off_command.execute()
+
+
+
 # --------------------------------
 # Application
 # --------------------------------
 
-if __name__ == "__main__":
 
-    tv = Television()
-    radio = Radio()
+tv = Television()
+radio = Radio()
 
-    # create various commands
-    turn_tv_on = TurnOn(device = tv)
-    turn_tv_off = TurnOff(device = tv)
-    turn_tv_up = TurnUp(device = tv)
-    turn_radio_on = TurnOn(device = radio)
-    turn_them_off = TurnThemOff(devices = [tv, radio])
+# create various commands
+turn_tv_on = TurnOn(device = tv)
+turn_radio_on = TurnOn(device = radio)
+turn_tv_off = TurnOff(device = tv)
+turn_radio_off = TurnOff(device = radio)
+turn_tv_up = TurnUp(device = tv)
+turn_radio_up = TurnUp(device = radio)
+turn_tv_down = TurnDown(device = tv)
+turn_radio_down = TurnDown(device = radio)
+turn_them_off = TurnThemOff(devices = [tv, radio])
 
-    # create remote control buttons
-    button1 = Button(command = turn_tv_on)
-    button2 = Button(command = turn_tv_off)
-    button3 = Button(command = turn_tv_up)
-    button4 = Button(command = turn_radio_on)
-    button5 = Button(command = turn_them_off)
+# create remote control buttons
 
-    # playing with the buttons
-    button1.press()
-    button2.press()
-    button1.press()
-    button3.press()
-    button3.press()
-    button3.press()
-    button4.press()
-    button5.press()
+button1 = ToggleButton(
+    on_command = turn_tv_on,
+    off_command = turn_tv_off)
+
+button2 = ToggleButton(
+    on_command = turn_radio_on,
+    off_command = turn_radio_off)
+
+button3 = PushButton(command = turn_tv_up)
+button4 = PushButton(command = turn_tv_down)
+
+button5 = PushButton(command = turn_radio_up)
+button6 = PushButton(command = turn_radio_down)
+
+button7 = PushButton(command = turn_them_off)
+
+# playing with the buttons
+
+button1.press()
+button2.press()
+button1.press()
+button1.press()
+button3.press()
+button3.press()
+button4.press()
+button5.press()
+button6.press()
+button7.press()
