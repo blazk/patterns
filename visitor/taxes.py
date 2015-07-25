@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
 # Visitor pattern.
-# Original Java example:
+# Adapted from original Java example
 # https://www.youtube.com/watch?v=pL4mOUDi54o
 
 
-# ------------------
-# Visitables
-# ------------------
-
+# -----------------------
+# A bunch of Visitables
+# -----------------------
 
 class Visitable(object):
 
@@ -18,15 +17,26 @@ class Visitable(object):
 
 class Necessity(Visitable):
 
-    price = 4.5
-
     def accept(self, visitor):
         visitor.visit_necessity(self)
 
 
+class Milk(Necessity):
+
+    name = 'milk'
+    price = 0.99
+
+
+class Bread(Necessity):
+
+    name = 'bread'
+    price = 0.6
+
+
 class Tobacco(Visitable):
 
-    price = 9.85
+    name = 'tobacco'
+    price = 10.0
 
     def accept(self, visitor):
         visitor.visit_tobacco(self)
@@ -34,16 +44,16 @@ class Tobacco(Visitable):
 
 class Liquor(Visitable):
 
-    price = 17.0
+    name = 'liquor'
+    price = 20.0
 
     def accept(self, visitor):
         visitor.visit_liquor(self)
 
 
-
-# -------------------
-# Visitor
-# -------------------
+# -------------------------------
+# A couple of different Visitors
+# -------------------------------
 
 
 class Visitor(object):
@@ -51,10 +61,10 @@ class Visitor(object):
     def visit_necessity(self, necessity):
         pass
 
-    def visit_tobacco(self, necessity):
+    def visit_tobacco(self, tobacco):
         pass
 
-    def visit_liquor(self, necessity):
+    def visit_liquor(self, liquor):
         pass
 
 
@@ -62,44 +72,50 @@ class Visitor(object):
 class NetVisitor(Visitor):
 
     def visit_necessity(self, necessity):
-        print "Necessity price:", necessity.price
+        print necessity.name, "price:", necessity.price
 
     def visit_tobacco(self, tobacco):
-        print "Tobacco price:", tobacco.price
+        print tobacco.name, "price:", tobacco.price
 
-    def visit_liquor(self, liquor):
-        print "Liquor price:", liquor.price
+    def visit_liquor(self, item):
+        print liquor.name, "price:", liquor.price
 
 
 
 class TaxVisitor(Visitor):
 
     def visit_necessity(self, necessity):
-        x = necessity.price
-        print "Necessity price with tax:", x
+        name = necessity.name
+        price = necessity.price
+        print name, "price with tax:", price
 
     def visit_tobacco(self, tobacco):
-        x = tobacco.price
-        print "Tobacco price with tax:", x + x * 0.3
+        name = tobacco.name
+        price = tobacco.price
+        print name, "price with tax:", price + price * 0.3
 
     def visit_liquor(self, liquor):
-        x = liquor.price
-        print "Liquor price with tax:", x + x * 0.2
+        name = liquor.name
+        price = liquor.price
+        print name, "price with tax:", price + price * 0.2
 
 
 
 
-necessity = Necessity()
+milk = Milk()
+bread = Bread()
 tobacco = Tobacco()
 liquor = Liquor()
 
 net_visitor = NetVisitor()
-necessity.accept(net_visitor)
+milk.accept(net_visitor)
+bread.accept(net_visitor)
 tobacco.accept(net_visitor)
 liquor.accept(net_visitor)
 
 tax_visitor = TaxVisitor()
-necessity.accept(tax_visitor)
+milk.accept(tax_visitor)
+bread.accept(tax_visitor)
 tobacco.accept(tax_visitor)
 liquor.accept(tax_visitor)
 
