@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-# Visitor pattern.
-# Adapted from original Java example
-# https://www.youtube.com/watch?v=pL4mOUDi54o
+# Visitor pattern example
 
 
 # -----------------------
@@ -88,28 +86,16 @@ class Visitor(object):
         pass
 
 
-
-class NetVisitor(Visitor):
-
-    def visit_milk(self, milk):
-        print milk.name, "price:", milk.price
-
-    def visit_bread(self, bread):
-        print bread.name, "price:", bread.price
-
-    def visit_tobacco(self, tobacco):
-        print tobacco.name, "price:", tobacco.price
-
-    def visit_liquor(self, item):
-        print liquor.name, "price:", liquor.price
-
-
-
 class TaxVisitor(Visitor):
 
-    def visit_milk(self, necessity):
-        name = necessity.name
-        price = necessity.price
+    def visit_milk(self, milk):
+        name = milk.name
+        price = milk.price
+        print name, "price with tax:", price
+
+    def visit_bread(self, bread):
+        name = bread.name
+        price = bread.price
         print name, "price with tax:", price
 
     def visit_tobacco(self, tobacco):
@@ -123,6 +109,27 @@ class TaxVisitor(Visitor):
         print name, "price with tax:", price + price * 0.2
 
 
+class TotalPriceVisitor(Visitor):
+    """
+    Visitor with a state
+    """
+    def __init__(self):
+        self._total = 0.0
+
+    def visit_milk(self, milk):
+        self._total += milk.price
+
+    def visit_bread(self, bread):
+        self._total += bread.price
+
+    def visit_tobacco(self, tobacco):
+        self._total += tobacco.price
+
+    def visit_liquor(self, liquor):
+        self._total += liquor.price
+
+    def show(self):
+        print "Total price (without tax):", self._total
 
 
 milk = Milk()
@@ -130,15 +137,16 @@ bread = Bread()
 tobacco = Tobacco()
 liquor = Liquor()
 
-net_visitor = NetVisitor()
-milk.accept(net_visitor)
-bread.accept(net_visitor)
-tobacco.accept(net_visitor)
-liquor.accept(net_visitor)
-
 tax_visitor = TaxVisitor()
 milk.accept(tax_visitor)
 bread.accept(tax_visitor)
 tobacco.accept(tax_visitor)
 liquor.accept(tax_visitor)
+
+total = TotalPriceVisitor()
+milk.accept(total)
+bread.accept(total)
+tobacco.accept(total)
+liquor.accept(total)
+total.show()
 
