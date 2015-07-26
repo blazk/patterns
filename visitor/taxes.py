@@ -12,11 +12,7 @@ class Visitable(object):
         pass
 
 
-class Necessity(Visitable):
-    pass
-
-
-class Milk(Necessity):
+class Milk(Visitable):
 
     name = 'milk'
     price = 0.99
@@ -25,7 +21,7 @@ class Milk(Necessity):
         visitor.visit_milk(self)
 
 
-class Bread(Necessity):
+class Bread(Visitable):
 
     name = 'bread'
     price = 0.6
