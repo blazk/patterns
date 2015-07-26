@@ -16,9 +16,7 @@ class Visitable(object):
 
 
 class Necessity(Visitable):
-
-    def accept(self, visitor):
-        visitor.visit_necessity(self)
+    pass
 
 
 class Milk(Necessity):
@@ -26,11 +24,17 @@ class Milk(Necessity):
     name = 'milk'
     price = 0.99
 
+    def accept(self, visitor):
+        visitor.visit_milk(self)
+
 
 class Bread(Necessity):
 
     name = 'bread'
     price = 0.6
+
+    def accept(self, visitor):
+        visitor.visit_bread(self)
 
 
 class Tobacco(Visitable):
@@ -51,14 +55,30 @@ class Liquor(Visitable):
         visitor.visit_liquor(self)
 
 
-# -------------------------------
-# A couple of different Visitors
-# -------------------------------
+# ---------------------------------------------
+# A couple of different Visitors.
+#
+# This implementation of Visitor pattern has a
+# disadvantage over implementation in languages that
+# support method overloading; in a language with
+# method overloading we could define visit method
+# with a signature
+#    visit(Necessity necessity)
+# This method would handle both Milk and Bread.
+# In python we need to define explicit methods
+# for handling Milk and Bread.
+#
+# The taxes2.py example shows alternative
+# implementation which does not have this disadvantage.
+# ---------------------------------------------
 
 
 class Visitor(object):
 
-    def visit_necessity(self, necessity):
+    def visit_milk(self, milk):
+        pass
+
+    def visit_bread(self, bread):
         pass
 
     def visit_tobacco(self, tobacco):
@@ -71,8 +91,11 @@ class Visitor(object):
 
 class NetVisitor(Visitor):
 
-    def visit_necessity(self, necessity):
-        print necessity.name, "price:", necessity.price
+    def visit_milk(self, milk):
+        print milk.name, "price:", milk.price
+
+    def visit_bread(self, bread):
+        print bread.name, "price:", bread.price
 
     def visit_tobacco(self, tobacco):
         print tobacco.name, "price:", tobacco.price
@@ -84,7 +107,7 @@ class NetVisitor(Visitor):
 
 class TaxVisitor(Visitor):
 
-    def visit_necessity(self, necessity):
+    def visit_milk(self, necessity):
         name = necessity.name
         price = necessity.price
         print name, "price with tax:", price
