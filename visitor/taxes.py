@@ -2,9 +2,8 @@
 
 # Visitor pattern example
 
-
 # -----------------------
-# A bunch of Visitables
+# Visitables
 # -----------------------
 
 class Visitable(object):
@@ -53,22 +52,9 @@ class Liquor(Visitable):
         visitor.visit_liquor(self)
 
 
-# ---------------------------------------------
+# -------------------------------
 # A couple of different Visitors.
-#
-# This implementation of Visitor pattern has a
-# disadvantage over implementation in languages that
-# support method overloading; in a language with
-# method overloading we could define visit method
-# with a signature
-#    visit(Necessity necessity)
-# This method would handle both Milk and Bread.
-# In python we need to define explicit methods
-# for handling Milk and Bread.
-#
-# The taxes2.py example shows alternative
-# implementation which does not have this disadvantage.
-# ---------------------------------------------
+# -------------------------------
 
 
 class Visitor(object):
@@ -87,6 +73,10 @@ class Visitor(object):
 
 
 class TaxVisitor(Visitor):
+
+    """
+    calculates price after tax for each item type
+    """
 
     def visit_milk(self, milk):
         name = milk.name
@@ -110,9 +100,12 @@ class TaxVisitor(Visitor):
 
 
 class TotalPriceVisitor(Visitor):
+
     """
-    Visitor with a state
+    Calculates total price.
+    An example of a Visitor with state.
     """
+
     def __init__(self):
         self._total = 0.0
 
@@ -137,11 +130,11 @@ bread = Bread()
 tobacco = Tobacco()
 liquor = Liquor()
 
-tax_visitor = TaxVisitor()
-milk.accept(tax_visitor)
-bread.accept(tax_visitor)
-tobacco.accept(tax_visitor)
-liquor.accept(tax_visitor)
+tax = TaxVisitor()
+milk.accept(tax)
+bread.accept(tax)
+tobacco.accept(tax)
+liquor.accept(tax)
 
 total = TotalPriceVisitor()
 milk.accept(total)
@@ -149,4 +142,3 @@ bread.accept(total)
 tobacco.accept(total)
 liquor.accept(total)
 total.show()
-
