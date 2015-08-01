@@ -49,9 +49,11 @@ class Visitor(object):
             if handler is None:
                 continue
             return handler(visitable)
-        raise RuntimeError(
-            '{} of type {} is not supported'.format(
-                repr(visitable), visitable_class_hierarchy))
+        return self.fallback(visitable)
+
+    def fallback(self, visitable):
+        raise RuntimeError('{} of type {} is not supported'.format(
+                repr(visitable), type(visitable)))
 
 
 
@@ -94,6 +96,7 @@ class TotalPriceVisitor(Visitor):
         print "Total price (without tax):", self._total
 
 
+
 milk = Milk()
 bread = Bread()
 tobacco = Tobacco()
@@ -111,3 +114,11 @@ total.visit(bread)
 total.visit(tobacco)
 total.visit(liquor)
 total.show()
+
+## OUTPUT:
+# milk price with tax: 0.99
+# bread price with tax: 0.6
+# tobacco price with tax: 13.0
+# liquor price with tax: 24.0
+# Total price (without tax): 31.59
+
